@@ -1,11 +1,6 @@
 import { Link, useMatch } from "react-router-dom";
 import styled from "styled-components";
-import {
-  animate,
-  motion,
-  useAnimation,
-  useViewportScroll,
-} from "framer-motion";
+import { motion, useAnimation, useViewportScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 
 const Nav = styled(motion.nav)`

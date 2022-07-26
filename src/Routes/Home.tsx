@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { makeImagePath } from "../utils";
 import { useState } from "react";
+import { useMatch, useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
   background: black;
@@ -58,6 +59,7 @@ const Box = styled(motion.div)<{ bgPhoto: string }>`
   background-image: url(${(props) => props.bgPhoto});
   background-size: cover;
   background-position: center center;
+  cursor: pointer;
   &:first-child {
     transform-origin: center left;
   }
@@ -117,6 +119,8 @@ const infoVariants = {
 const offset = 6;
 
 const Home = () => {
+  const navigate = useNavigate();
+  const bigMovieMatch = useMatch("/movies/:movieId");
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
     getMovies
@@ -133,6 +137,9 @@ const Home = () => {
   };
   const [leaving, setLeaving] = useState(false);
   const toggleLeaving = () => setLeaving(false);
+  const onBoxClicked = (movieId: number) => {
+    navigate(`/movies/${movieId}`);
+  };
 
   return (
     <Wrapper>
@@ -162,10 +169,12 @@ const Home = () => {
                   .slice(offset * index, offset * index + offset)
                   .map((movie) => (
                     <Box
+                      layoutId={movie.id + ""}
                       key={movie.id}
                       whileHover="hover"
                       initial="normal"
                       variants={boxVariants}
+                      onClick={() => onBoxClicked(movie.id)}
                       transition={{ type: "tween" }}
                       bgPhoto={makeImagePath(
                         movie.backdrop_path || movie.poster_path,
@@ -180,6 +189,23 @@ const Home = () => {
               </Row>
             </AnimatePresence>
           </Slider>
+          <AnimatePresence>
+            {bigMovieMatch && (
+              <motion.div
+                layoutId={bigMovieMatch.params.movieId}
+                style={{
+                  position: "absolute",
+                  width: "40vw",
+                  height: "80vh",
+                  backgroundColor: "red",
+                  top: 50,
+                  right: 0,
+                  left: 0,
+                  margin: "0 auto",
+                }}
+              />
+            )}
+          </AnimatePresence>
         </>
       )}
     </Wrapper>
