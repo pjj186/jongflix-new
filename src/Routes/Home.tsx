@@ -99,6 +99,33 @@ const BigMovie = styled(motion.div)<{ scrolly: number }>`
   right: 0;
   left: 0;
   margin: 0 auto;
+  border-radius: 15px;
+  overflow: hidden;
+  background-color: ${(props) => props.theme.black.lighter};
+`;
+
+const BigCover = styled.div<{ image: string }>`
+  width: 100%;
+  background-image: linear-gradient(to top, black, transparent),
+    url(${(props) => props.image});
+  background-size: cover;
+  background-position: center center;
+  height: 400px;
+`;
+
+const BigTitle = styled.h3`
+  color: ${(props) => props.theme.white.lighter};
+  padding: 15px;
+  font-size: 46px;
+  position: relative;
+  top: -80px;
+`;
+
+const BigOverview = styled.p`
+  padding: 20px;
+  position: relative;
+  top: -8 0px;
+  color: ${(props) => props.theme.white.lighter};
 `;
 
 const rowVariants = {
@@ -155,6 +182,7 @@ const Home = () => {
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
+
   const [leaving, setLeaving] = useState(false);
   const toggleLeaving = () => setLeaving(false);
   const onBoxClicked = (movieId: number) => {
@@ -162,6 +190,13 @@ const Home = () => {
   };
 
   const onOverlayClick = () => navigate("/");
+  const clickedMovie =
+    bigMovieMatch?.params.movieId &&
+    data?.results.find(
+      (movie) => movie.id + "" === bigMovieMatch.params.movieId
+    );
+
+  console.log(clickedMovie);
 
   return (
     <Wrapper>
@@ -222,7 +257,20 @@ const Home = () => {
                 <BigMovie
                   layoutId={bigMovieMatch.params.movieId}
                   scrolly={scrollY.get()}
-                />
+                >
+                  {clickedMovie && (
+                    <>
+                      <BigCover
+                        image={makeImagePath(
+                          clickedMovie.backdrop_path,
+                          "w500"
+                        )}
+                      />
+                      <BigTitle>{clickedMovie.title}</BigTitle>
+                      <BigOverview>{clickedMovie.overview}</BigOverview>
+                    </>
+                  )}
+                </BigMovie>
               </>
             )}
           </AnimatePresence>
